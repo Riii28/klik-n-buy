@@ -1,8 +1,11 @@
+export const dynamic = "force-dynamic";
+
 import Setting from "@/components/admin/Setting";
 import UserDetailSetting from "@/components/admin/users/UserDetailSetting";
 import UserTransaction from "@/components/admin/users/UserTransaction";
 import Loading from "@/components/global/LoadingPage";
-import getUserById from "@/helpers/get_user_by_id";
+import Spinner from "@/components/ui/spinner";
+import getUserById from "@/lib/firebase/service/get_user_by_id";
 import { UserData } from "@/types/user";
 import Image from "next/image";
 import { Suspense } from "react";
@@ -41,7 +44,7 @@ export default async function Page({
                   <UserDetailSetting userID={userID} />
                </Setting>
             </div>
-            <Suspense fallback={<Loading />}>
+            <Suspense fallback={<Spinner />}>
                <UserTransaction />
             </Suspense>
          </>

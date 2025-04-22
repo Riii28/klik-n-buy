@@ -40,7 +40,7 @@ export default function SignInForm() {
          const response = await signIn("google", { callbackUrl: "/" });
          if (response?.error) {
             toast.error("Gagal masuk dengan Google.");
-            return   
+            return;
          }
 
          await fetch("/api/admin/users/revalidate", { method: "POST" }).catch(
@@ -51,7 +51,7 @@ export default function SignInForm() {
       } finally {
          setLoading(false);
       }
-   };
+   }
 
    async function onSubmit(values: z.infer<typeof loginSchema>) {
       setLoading(true);
@@ -78,7 +78,7 @@ export default function SignInForm() {
       } finally {
          setLoading(false);
       }
-   };
+   }
 
    return (
       <Form {...form}>

@@ -5,7 +5,7 @@ import { loginSchema } from "@/lib/zod/validation";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { clientAuth } from "@/lib/firebase/client";
 import { adminAuth } from "@/lib/firebase/admin";
-import { createUser } from "@/lib/firebase/service";
+import { createUser } from "@/lib/firebase/service/create_user";
 
 export const authOptions: AuthOptions = {
    providers: [

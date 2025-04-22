@@ -7,9 +7,7 @@ import { faChevronRight, faHome } from "@fortawesome/free-solid-svg-icons";
 
 export default function Breadcrumb() {
    const pathname = usePathname();
-
    const pathSegments = pathname.split("/").filter((seg) => seg);
-
    const breadcrumbs = pathSegments.map((segment, index) => {
       const href = "/" + pathSegments.slice(0, index + 1).join("/");
       return {
@@ -21,8 +19,11 @@ export default function Breadcrumb() {
    });
 
    return (
-      <div className="flex flex-wrap items-center gap-2 text-sm text-gray-600 py-2">
-         <Link href="/" className="hover:underline text-gray-500 flex items-center gap-x-2">
+      <div className="flex flex-wrap items-center gap-2 text-gray-600">
+         <Link
+            href="/"
+            className="hover:underline text-gray-500 flex items-center gap-x-2"
+         >
             <FontAwesomeIcon icon={faHome} />
             <span>Home</span>
          </Link>

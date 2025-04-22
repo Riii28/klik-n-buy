@@ -1,4 +1,4 @@
-import { adminDb } from "./admin";
+import { adminDb } from "../admin";
 
 interface UserData {
    email: string;
@@ -33,6 +33,6 @@ export async function createUser(uid: string, userData: UserData) {
       await userRef.update(updatedUser);
       return updatedUser;
    } catch (err) {
-      throw new Error("Error creating or updating user: " + (err instanceof Error ? err.message : ""));
+      throw new Error("Error creating or updating user");
    }
 }

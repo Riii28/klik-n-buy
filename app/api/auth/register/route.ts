@@ -1,5 +1,5 @@
 import { adminAuth } from "@/lib/firebase/admin";
-import { createUser } from "@/lib/firebase/service";
+import { createUser } from "@/lib/firebase/service/create_user";
 import { registerSchema } from "@/lib/zod/validation";
 import { revalidateTag } from "next/cache";
 import { NextRequest, NextResponse } from "next/server";
