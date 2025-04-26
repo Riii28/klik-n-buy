@@ -17,6 +17,7 @@ export default async function getAllUsers(page = 1, limit = 10) {
             query = query.startAfter(lastDoc);
          }
       }
+      
       const snapshot = await query.get();
 
       const users = snapshot.docs.map((doc) => ({

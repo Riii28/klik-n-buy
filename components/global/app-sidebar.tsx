@@ -46,7 +46,7 @@ const data = {
       },
       {
          title: "Users",
-         url: "/admin/users",
+         url: "/admin/users?page=1",
          icon: faUserGroup,
       },
       {

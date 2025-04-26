@@ -18,9 +18,9 @@ export default function Setting({
       <>
          <Button
             onClick={() => setState((prev) => !prev)}
-            className="px-2 py-1 rounded-md bg-accent cursor-pointer hover:bg-white"
+            className="rounded-md bg-transparent cursor-pointer hover:bg-transparent"
          >
-            <FontAwesomeIcon icon={faGear} className="text-foreground" />
+            <FontAwesomeIcon icon={faGear} className="text-foreground" size="lg" />
          </Button>
          {state && (
             <div className="absolute right-0 top-12 z-10 bg-white divide-y divide-gray-100 rounded-md shadow-md w-46 dark:bg-gray-700 dark:divide-gray-600">

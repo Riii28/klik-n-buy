@@ -3,7 +3,6 @@ export const dynamic = "force-dynamic";
 import Setting from "@/components/admin/Setting";
 import UserDetailSetting from "@/components/admin/users/UserDetailSetting";
 import UserTransaction from "@/components/admin/users/UserTransaction";
-import Loading from "@/components/global/LoadingPage";
 import Spinner from "@/components/ui/spinner";
 import getUserById from "@/lib/firebase/service/get_user_by_id";
 import { UserData } from "@/types/user";
@@ -17,9 +16,9 @@ export default async function Page({
 }) {
    try {
       const { userID } = await params;
-      const data: UserData = (await getUserById(userID)) as UserData;
+      const user: UserData = (await getUserById(userID)) as UserData;
 
-      if (!data) {
+      if (!user) {
          throw new Error("Pengguna tidak ditemukan");
       }
 
@@ -27,13 +26,13 @@ export default async function Page({
          <>
             <div className="flex justify-between items-center">
                <div>
-                  <h1 className="text-lg md:text-2xl">{data.username}</h1>
-                  <h1 className="text-dark-300">{data.email}</h1>
+                  <h1 className="text-lg md:text-2xl">{user.username}</h1>
+                  <h1 className="text-dark-300">{user.email}</h1>
                </div>
                <Image
                   className="rounded-full w-13 h-13 md:w-15 md:h-15"
-                  src={data.profileImage!}
-                  alt={data.username!}
+                  src={user.profileImage!}
+                  alt={user.username!}
                   width={40}
                   height={40}
                />

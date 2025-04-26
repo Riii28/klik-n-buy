@@ -1,6 +1,6 @@
 import ProductTable from "@/components/admin/products/ProductTable";
 import { Suspense } from "react";
-import Loading from "@/components/global/LoadingPage";
+import Loading from "@/components/global/Spinner";
 import Setting from "@/components/admin/Setting";
 import ProductSetting from "@/components/admin/products/ProductSetting";
 
