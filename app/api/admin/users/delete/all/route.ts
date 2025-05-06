@@ -1,5 +1,4 @@
-import { adminDb } from "@/lib/firebase/admin";
-import { revalidateTag } from "next/cache";
+import { adminDb, adminAuth } from "@/lib/firebase/admin";
 import { NextResponse, NextRequest } from "next/server";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/auth";
@@ -13,7 +12,7 @@ export async function DELETE(request: NextRequest) {
                success: false,
                message: "Unauthorized access",
             },
-            { status: 401, statusText: "Unauthorized" }
+            { status: 401 }
          );
       }
 
@@ -23,7 +22,7 @@ export async function DELETE(request: NextRequest) {
                success: false,
                message: "Access denied",
             },
-            { status: 403, statusText: "Forbidden" }
+            { status: 403 }
          );
       }
 
@@ -34,38 +33,41 @@ export async function DELETE(request: NextRequest) {
          return NextResponse.json(
             {
                success: false,
-               message: "Tidak ada data di koleksi",
+               message: "Users not found",
             },
-            { status: 404, statusText: "Not Found" }
+            { status: 404 }
          );
       }
 
       const batch = adminDb.batch();
+      const deletePromises: Promise<any>[] = [];
 
       userSnap.docs.forEach((doc) => {
          const data = doc.data();
-         if (data.role !== "Admin") {
+         if (data.role !== "Admin" && data.uid) {
             batch.delete(doc.ref);
+            deletePromises.push(adminAuth.deleteUser(data.uid));
          }
       });
 
+      await Promise.all(deletePromises);
       await batch.commit();
-      revalidateTag("user_table");
 
       return NextResponse.json(
          {
             success: true,
-            message: "Berhasil menghapus semua user non-admin",
+            message: "Success",
          },
-         { status: 200, statusText: "OK" }
+         { status: 200 }
       );
    } catch (err) {
+      console.error(err);
       return NextResponse.json(
          {
-            sucess: false,
-            mesasge: "Internal server error",
+            success: false,
+            message: "Internal server error",
          },
-         { status: 500, statusText: "Internal Server Error" }
+         { status: 500 }
       );
    }
 }

@@ -19,7 +19,7 @@ export default function Breadcrumb() {
    });
 
    return (
-      <div className="flex flex-wrap items-center gap-2 text-gray-600">
+      <div className="flex items-center gap-2 text-gray-600">
          <Link
             href="/"
             className="hover:underline text-gray-500 flex items-center gap-x-2"

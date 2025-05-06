@@ -1,8 +1,8 @@
 import { adminAuth } from "@/lib/firebase/admin";
 import { createUser } from "@/lib/firebase/service/create_user";
 import { registerSchema } from "@/lib/zod/validation";
-import { revalidateTag } from "next/cache";
 import { NextRequest, NextResponse } from "next/server";
+import { generateID } from "@/helpers/generate_id";
 
 export async function POST(req: NextRequest) {
    try {
@@ -15,7 +15,7 @@ export async function POST(req: NextRequest) {
                success: false,
                message: "Validasi gagal",
             },
-            { status: 400, statusText: "Bad Request" }
+            { status: 400 }
          );
       }
 
@@ -32,8 +32,10 @@ export async function POST(req: NextRequest) {
          );
       }
 
-      // Create Firebase Auth user
+      const hashedId = generateID(email);
+
       const userRecord = await adminAuth.createUser({
+         uid: hashedId,
          email,
          password,
          displayName: username,
@@ -42,20 +44,18 @@ export async function POST(req: NextRequest) {
          )}&background=random`,
       });
 
-      await createUser(userRecord.uid, {
+      await createUser(hashedId, {
          email,
          username,
          profileImage: userRecord.photoURL || null,
       });
-
-      revalidateTag("user_table");
 
       return NextResponse.json(
          {
             success: true,
             message: "Akun berhasil dibuat.",
          },
-         { status: 201, statusText: "Created" }
+         { status: 201 }
       );
    } catch (err) {
       return NextResponse.json(
@@ -63,7 +63,7 @@ export async function POST(req: NextRequest) {
             success: false,
             message: "Internal server error",
          },
-         { status: 500, statusText: "Internal Server Error" }
+         { status: 500 }
       );
    }
 }

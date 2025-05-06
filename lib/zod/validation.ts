@@ -14,7 +14,7 @@ export const registerSchema = z.object({
   username: z.string()
     .min(3, "Username minimal 3 karakter")
     .max(50, "Username maksimal 50 karakter")
-    .regex(/^[a-zA-Z0-9_]+$/, "Username hanya boleh berisi huruf, angka, dan underscore"),
+    .regex(/^[a-zA-Z0-9]+$/, "Username hanya boleh berisi huruf, angka"),
   email: z.string()
     .email("Email tidak valid")
     .min(5, "Email terlalu pendek")

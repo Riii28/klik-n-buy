@@ -1,22 +1,32 @@
 "use client";
 
+import { useConfirm } from "@/context/Confirm";
 import fetcher from "@/helpers/fetcher";
 import { Response } from "@/types/response";
 import { toast } from "sonner";
 
 export default function UserSetting() {
+   const confirm = useConfirm();
+
    async function handleDeleteAllUsers() {
       try {
-         const response: Response = await fetcher(
-            "/api/admin/users/delete/all",
-            { method: "DELETE" }
-         );
+         const isConfirmed = await confirm({
+            title: "Delete All Users?",
+            message: "This action is irresible",
+         });
 
-         if (!response.success) {
-            throw new Error(response.message);
+         if (isConfirmed) {
+            const response: Response = await fetcher(
+               "/api/admin/users/delete/all",
+               { method: "DELETE" }
+            );
+
+            if (!response.success) {
+               throw new Error(response.message);
+            }
+
+            toast.success(response.message);
          }
-
-         toast.success(response.message);
       } catch (err) {
          if (err instanceof Error) {
             toast.error(err.message);
@@ -33,7 +43,7 @@ export default function UserSetting() {
                className="cursor-pointer flex w-full"
                onClick={handleDeleteAllUsers}
             >
-               Delete All Users
+               Delete All
             </button>
          </li>
       </ul>

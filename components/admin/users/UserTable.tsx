@@ -14,9 +14,9 @@ import { cn } from "@/lib/utils";
 
 export default async function UserTable({
    className,
+   totalUsers,
    page,
    LIMIT,
-   totalUsers
 }: {
    className?: string;
    page?: string;
@@ -36,7 +36,7 @@ export default async function UserTable({
             <TableHeader className="font-bold">
                <TableRow>
                   <TableHead className="w-[100px]">No</TableHead>
-                  <TableHead>Nama</TableHead>
+                  <TableHead>Name</TableHead>
                   <TableHead>Email</TableHead>
                   <TableHead>Role</TableHead>
                   <TableHead>Action</TableHead>

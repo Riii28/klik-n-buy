@@ -1,13 +1,16 @@
-import { adminDb } from "@/lib/firebase/admin";
+import { adminDb } from "../admin";
 
-export default async function getAllUsers(page: number = 1, limit: number = 10) {
+export async function getAllProducts(page: number = 1, limit: number = 0) {
    try {
       const offset = (page - 1) * limit;
-      let query = adminDb.collection("users").orderBy("createdAt").limit(limit);
+      let query = adminDb
+         .collection("products")
+         .orderBy("createdAt")
+         .limit(limit);
 
       if (offset > 0) {
          const snapshot = await adminDb
-            .collection("users")
+            .collection("products")
             .orderBy("createdAt")
             .limit(offset)
             .get();
@@ -17,15 +20,15 @@ export default async function getAllUsers(page: number = 1, limit: number = 10) 
             query = query.startAfter(lastDoc);
          }
       }
-      
-      const snapshot = await query.get();
 
-      const users = snapshot.docs.map((doc) => ({
+      const snapshot = await query.get();
+      
+      const products = snapshot.docs.map((doc) => ({
          id: doc.id,
          ...doc.data(),
       }));
-
-      return users;
+      
+      return products
    } catch (err) {
       if (err instanceof Error) {
          throw err;

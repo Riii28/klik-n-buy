@@ -30,7 +30,7 @@ import fetcher from "@/helpers/fetcher";
 
 export default function AddProductForm() {
    const [loading, setLoading] = useState(false);
-   const { push } = useRouter();
+   const { back } = useRouter();
 
    const form = useForm<z.infer<typeof productSchema>>({
       resolver: zodResolver(productSchema),
@@ -55,14 +55,16 @@ export default function AddProductForm() {
          });
 
          if (!response.success) {
-            toast.error(response.message)
-            return
+            toast.error(response.message);
+            return;
          }
 
          toast.success(response.message);
-         push("/admin/products");
+         back();
       } catch (err) {
-         toast.error("Gagal menambahkan produk. Silakan coba lagi.");
+         if (err instanceof Error) {
+            toast.error(err.message);
+         }
       } finally {
          setLoading(false);
       }

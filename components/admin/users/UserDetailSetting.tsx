@@ -1,23 +1,34 @@
 "use client";
 
+import { useConfirm } from "@/context/Confirm";
 import fetcher from "@/helpers/fetcher";
 import { Response } from "@/types/response";
 import Link from "next/link";
 import { toast } from "sonner";
 
 export default function UserDetailSetting({ userID }: { userID: string }) {
+   const confirm = useConfirm();
+
    async function handleDeleteUser(userID: string) {
       try {
-         const response: Response = await fetcher(
-            `/api/admin/users/delete/${userID}`,
-            { method: "DELETE" }
-         );
+         const isConfirmed = await confirm({
+            title: "Delete user?",
+            message: "This action cannot be undo",
+            confirmText: "Yes",
+            cancelText: "Cancel",
+         });
 
-         if (!response.success) {
-            throw new Error(response.message);
+         if (isConfirmed) {
+            const response: Response = await fetcher(
+               `/api/admin/users/delete/${userID}`,
+               { method: "DELETE" }
+            );
+
+            if (!response.success) {
+               throw new Error(response.message);
+            }
+            toast.success(response.message);
          }
-
-         toast.success(response.message);
       } catch (err) {
          if (err instanceof Error) {
             toast.error(err.message);
@@ -34,7 +45,7 @@ export default function UserDetailSetting({ userID }: { userID: string }) {
                className="cursor-pointer flex w-full"
                onClick={() => handleDeleteUser(userID)}
             >
-               Delete user
+               Delete
             </button>
          </li>
          <li className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
@@ -42,7 +53,7 @@ export default function UserDetailSetting({ userID }: { userID: string }) {
                className="cursor-pointer flex w-full"
                href={`/admin/users/${userID}/edit`}
             >
-               Edit user
+               Edit
             </Link>
          </li>
       </ul>

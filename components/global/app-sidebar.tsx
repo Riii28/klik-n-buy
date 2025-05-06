@@ -41,7 +41,7 @@ const data = {
       },
       {
          title: "Products",
-         url: "/admin/products",
+         url: "/admin/products?page=1",
          icon: faLayerGroup,
       },
       {
