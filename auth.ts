@@ -6,6 +6,7 @@ import { signInWithEmailAndPassword } from "firebase/auth";
 import { clientAuth } from "@/lib/firebase/client";
 import { adminAuth } from "@/lib/firebase/admin";
 import { createUser } from "@/lib/firebase/service/create_user";
+import { generateID } from "./helpers/generate_id";
 
 export const authOptions: AuthOptions = {
    providers: [
@@ -14,14 +15,16 @@ export const authOptions: AuthOptions = {
          clientSecret: process.env.AUTH_GOOGLE_SECRET!,
          profile: async (profile) => {
             try {
-               const userData = await createUser(profile.sub, {
+               const hashedId = generateID(profile.email);
+
+               const userData = await createUser(hashedId, {
                   username: profile.name,
                   email: profile.email,
                   profileImage: profile.picture,
                });
 
                return {
-                  id: profile.sub,
+                  id: hashedId,
                   username: userData.username,
                   email: userData.email,
                   role: userData.role,
@@ -54,14 +57,16 @@ export const authOptions: AuthOptions = {
                const idToken = await userCredential.user.getIdToken();
                const userRecord = await adminAuth.verifyIdToken(idToken);
 
-               const userData = await createUser(userRecord.uid, {
+               const hashedId = generateID(userRecord.email!);
+
+               const userData = await createUser(hashedId, {
                   username: userRecord.name || "Pengguna",
                   email: userRecord.email!,
                   profileImage: userRecord.picture || null,
                });
 
                return {
-                  id: userRecord.uid,
+                  id: hashedId,
                   username: userData.username,
                   email: userData.email,
                   role: userData.role,

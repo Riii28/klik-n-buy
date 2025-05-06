@@ -1,5 +1,6 @@
 import { AppSidebar } from "@/components/global/app-sidebar";
-import Breadcrumb from "@/components/admin/Breadcrumb";
+import Breadcrumb from "@/components/global/Breadcrumb";
+
 import {
    SidebarInset,
    SidebarProvider,
@@ -16,7 +17,7 @@ export default function Layout({ children }: { children: ReactNode }) {
                <SidebarTrigger />
                <Breadcrumb />
             </header>
-            <div className="relative p-4 md:p-6">{children}</div>
+            <main className="p-4 md:p-6">{children}</main>
          </SidebarInset>
       </SidebarProvider>
    );

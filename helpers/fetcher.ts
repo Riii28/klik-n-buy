@@ -9,13 +9,13 @@ export default async function fetcher<T>(
    const timeoutId = setTimeout(() => controller.abort(), timeout);
 
    try {
-      const response = await fetch(url, {
+      const response: Response = await fetch(url, {
          ...options,
          signal: controller.signal,
       });
 
       if (!response.ok) {
-         throw new Error(`HTTP Error! ${response.status}`);
+         throw new Error(response.statusText);
       }
       return (await response.json()) as T;
    } catch (err) {

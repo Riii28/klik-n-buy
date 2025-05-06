@@ -12,12 +12,13 @@ export async function createUser(uid: string, userData: UserData) {
       const userDoc = await userRef.get();
 
       if (!userDoc.exists) {
+         const createdAt = new Date().toISOString();
          const newUser = {
             id: uid,
             ...userData,
             role: "Customer",
-            createdAt: new Date().toISOString(),
-            updatedAt: new Date().toISOString(),
+            createdAt,
+            updatedAt: createdAt,
          };
          await userRef.set(newUser);
          return newUser;

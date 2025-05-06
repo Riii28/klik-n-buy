@@ -1,4 +1,4 @@
-import getAllProducts from "@/helpers/get_all_products";
+import { getAllProducts } from "@/lib/firebase/service/get_all_products";
 import {
    Table,
    TableBody,
@@ -7,25 +7,36 @@ import {
    TableHead,
    TableHeader,
    TableRow,
+   TableFooter,
 } from "../../ui/table";
 import { Product } from "@/types/product";
 
-export default async function ProductTable() {
+export default async function ProductTable({
+   page,
+   LIMIT,
+   totalProducts,
+   className,
+}: {
+   className?: string;
+   page?: string;
+   LIMIT: number;
+   totalProducts: number;
+}) {
    try {
-      const data: Product[] = (await getAllProducts()) as Product[];
+      const currentPage = parseInt(page ?? "1");
+      const products: Product[] = await getAllProducts(currentPage, LIMIT);
 
-      if (!data || data.length === 0) {
+      if (!products || products.length === 0) {
          throw new Error("Tidak ada produk");
       }
 
       return (
          <Table className="mt-6">
-            <TableCaption>Daftar produk</TableCaption>
-            <TableHeader>
+            <TableHeader className="font-bold">
                <TableRow>
                   <TableHead className="w-[100px]">No</TableHead>
                   <TableHead>Name</TableHead>
-                  <TableHead className="w-[100px]">Description</TableHead>
+                  <TableHead className="w-[200px]">Description</TableHead>
                   <TableHead>Price</TableHead>
                   <TableHead>Stock</TableHead>
                   <TableHead>Category</TableHead>
@@ -34,12 +45,15 @@ export default async function ProductTable() {
                </TableRow>
             </TableHeader>
             <TableBody>
-               {data.map((product, i) => (
+               {products.map((product: any, i: any) => (
                   <TableRow key={i}>
                      <TableCell>{i + 1}</TableCell>
                      <TableCell>{product.name}</TableCell>
-                     <TableCell className="w-[100px]">
-                        {product.description}
+                     <TableCell
+                        className="w-[200px] max-w-[200px]"
+                        title={product.description}
+                     >
+                        <p className="truncate">{product.description}</p>
                      </TableCell>
                      <TableCell>{product.price}</TableCell>
                      <TableCell>{product.stock}</TableCell>
@@ -49,7 +63,15 @@ export default async function ProductTable() {
                   </TableRow>
                ))}
             </TableBody>
+            <TableFooter>
+               <TableRow className="font-bold">
+                  <TableCell colSpan={7}>Total:</TableCell>
+                  <TableCell>{totalProducts} Users</TableCell>
+               </TableRow>
+            </TableFooter>
          </Table>
       );
-   } catch (err) {}
+   } catch (err) {
+      return <div>Error loading products</div>;
+   }
 }

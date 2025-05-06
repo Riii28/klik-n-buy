@@ -1,6 +1,6 @@
 export const dynamic = "force-dynamic";
 
-import Setting from "@/components/admin/Setting";
+import Setting from "@/components/global/Setting";
 import UserDetailSetting from "@/components/admin/users/UserDetailSetting";
 import UserTransaction from "@/components/admin/users/UserTransaction";
 import Spinner from "@/components/ui/spinner";

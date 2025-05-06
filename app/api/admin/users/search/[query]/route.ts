@@ -5,7 +5,7 @@ import { adminDb } from "@/lib/firebase/admin";
 
 export async function GET(
    request: NextRequest,
-   { params }: { params: { query: string } }
+   { params }: { params: Promise<{ query: string }> }
 ) {
    const session = await getServerSession(authOptions);
 
@@ -16,7 +16,7 @@ export async function GET(
       );
    }
 
-   const { query } = params;
+   const { query } = await params;
 
    if (!query) {
       return NextResponse.json(
@@ -27,8 +27,9 @@ export async function GET(
 
    const snapshot = await adminDb
       .collection("users")
-      .where("username", ">=", query)
-      .where("username", "<=", query + "\uf8ff")
+      .where("email", ">=", query)
+      .where("email", "<=", query + "\uf8ff")
+      .limit(100)
       .get();
 
    const users = snapshot.docs.map((doc) => ({
