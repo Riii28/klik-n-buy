@@ -1,38 +1,49 @@
-// lib/zod/validation.ts
 import { z } from "zod";
 
-export const loginSchema = z.object({
-  email: z.string()
-    .email("Email tidak valid")
-    .min(5, "Email terlalu pendek")
-    .max(100, "Email terlalu panjang"),
-  password: z.string()
-    .min(8, "Password minimal 8 karakter")
+export const signInSchema = z.object({
+   email: z
+      .string()
+      .email("Invalid email address")
+      .min(5, "Email is too short")
+      .max(100, "Email is too long"),
+   password: z.string().min(8, "Password must be at least 8 characters"),
 });
 
-export const registerSchema = z.object({
-  username: z.string()
-    .min(3, "Username minimal 3 karakter")
-    .max(50, "Username maksimal 50 karakter")
-    .regex(/^[a-zA-Z0-9]+$/, "Username hanya boleh berisi huruf, angka"),
-  email: z.string()
-    .email("Email tidak valid")
-    .min(5, "Email terlalu pendek")
-    .max(100, "Email terlalu panjang"),
-  password: z.string()
-    .min(8, "Password minimal 8 karakter"),
-  // confirmPassword: z.string()
-})
-// .refine((data) => data.password === data.confirmPassword, {
-//   message: "Password dan konfirmasi tidak sama",
-//   path: ["confirmPassword"],
-// });
+export const signUpSchema = z
+   .object({
+      username: z
+         .string()
+         .min(3, "Username must be at least 3 characters")
+         .max(50, "Username must not exceed 50 characters")
+         .regex(
+            /^[a-zA-Z0-9\s]+$/,
+            "Username can only contain letters, numbers, and spaces"
+         )
+         .refine((val) => val.trim().length >= 3, {
+            message: "Username must contain at least 3 non-space characters",
+         }),
+      email: z
+         .string()
+         .email("Invalid email address")
+         .min(5, "Email is too short")
+         .max(100, "Email is too long"),
+      password: z.string().min(8, "Password must be at least 8 characters"),
+      confirmPassword: z.string(),
+   })
+   .refine((data) => data.password === data.confirmPassword, {
+      message: "Password do not match",
+      path: ["confirmPassword"],
+   });
 
 export const productSchema = z.object({
-   name: z.string().min(1, "Nama produk wajib diisi"),
-   description: z.string().min(1, "Deskripsi wajib diisi"),
-   price: z.string().regex(/^\d+$/, "Harga harus berupa angka"),
-   imageUrl: z.string().url("Masukkan URL gambar yang valid"),
-   category: z.string().min(1, "Kategori wajib dipilih"),
-   stock: z.string().regex(/^\d+$/, "Stok harus berupa angka"),
+   name: z.string().min(1, "Product name is required"),
+   description: z.string().min(1, "Description is required"),
+   price: z.string().regex(/^\d+$/, "Price must be a valid number"),
+   imageUrl: z.string().url("Please enter a valid image URL"),
+   category: z.string().min(1, "Category must be selected"),
+   stock: z.string().regex(/^\d+$/, "Stock must be a valid number"),
 });
+
+export type LoginFormData = z.infer<typeof signInSchema>;
+export type RegisterFormData = z.infer<typeof signUpSchema>;
+export type ProductFormData = z.infer<typeof productSchema>;

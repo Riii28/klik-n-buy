@@ -1,25 +1,20 @@
-import SignUpForm from "@/components/auth/SignUpForm";
+import SignUp from "@/components/auth/SignUp";
+import Welcome from "@/components/auth/Welcome";
 import Image from "next/image";
 
 export default function Page() {
    return (
-      <div className="flex flex-col gap-y-14 relative">
-         <div>
-            <h1 className="text-2xl font-semibold text-center">
-               Buat akun KlikNBuy
-            </h1>
-            <h4 className="text-center text-sm">
-               Mohon isi formulir di bawah ini
-            </h4>
-         </div>
-         <SignUpForm />
-         <Image
-            className="absolute w-full opacity-30"
-            width={200}
-            height={200}
-            src={"/sign-up.svg"}
-            alt="icon"
+      <>
+         <Welcome
+            title="Create Account"
+            subtitle="Join thousands of users"
+            imageUrl="/sign-up.svg"
          />
-      </div>
+         <section className="lg:flex-1 p-4 md:p-6 lg:p-10">
+            <div className="bg-light-400 h-full p-6 md:p-9 rounded-xl">
+               <SignUp />
+            </div>
+         </section>
+      </>
    );
 }

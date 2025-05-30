@@ -112,6 +112,8 @@
    --color-dark-200: #333333;
    --color-dark-300: #5c5c5c;
    --color-light-200: #f5f5f5;
+   --color-light-300: #eaeaeb;
+   --color-light-400: #f3f3ff;
 }
 
 @layer base {
@@ -120,5 +122,16 @@
    }
    body {
       @apply bg-background text-foreground;
+   }
+}
+
+@layer utilities {
+   .scrollbar-hide {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+   }
+
+   .scrollbar-hide::-webkit-scrollbar {
+      display: none;
    }
 }

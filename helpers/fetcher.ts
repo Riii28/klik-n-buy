@@ -5,7 +5,7 @@ export default async function fetcher<T>(
    options?: FetcherOptions
 ): Promise<T> {
    const controller = new AbortController();
-   const timeout = options?.timeout || 5000;
+   const timeout = options?.timeout || 1 * 60 * 1000;
    const timeoutId = setTimeout(() => controller.abort(), timeout);
 
    try {
@@ -14,9 +14,6 @@ export default async function fetcher<T>(
          signal: controller.signal,
       });
 
-      if (!response.ok) {
-         throw new Error(response.statusText);
-      }
       return (await response.json()) as T;
    } catch (err) {
       if (err instanceof DOMException && err.name === "AbortError") {

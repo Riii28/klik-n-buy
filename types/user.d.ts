@@ -5,4 +5,5 @@ export interface UserData {
    role?: "Pengguna" | "Admin";
    email?: string;
    createdAt?: string;
+   address: string
 }

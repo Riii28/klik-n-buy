@@ -9,25 +9,15 @@ export async function POST(request: NextRequest) {
    try {
       const session = await getServerSession(authOptions);
 
-      if (!session) {
+      if (!session || session.user.role !== "Admin") {
          return NextResponse.json(
             {
                success: false,
-               message: "Unauthorized access",
+               message: "Unauthorized: Admin access required.",
             },
             { status: 401 }
          );
       }
-
-      // if (session.user.role !== "Admin") {
-      //    return NextResponse.json(
-      //       {
-      //          success: false,
-      //          message: "Access denied",
-      //       },
-      //       { status: 403, statusText: 'Access Denied' }
-      //    );
-      // }
 
       const body = await request.json();
       const bodyParsed = productSchema.safeParse(body);
@@ -36,9 +26,10 @@ export async function POST(request: NextRequest) {
          return NextResponse.json(
             {
                success: false,
-               message: "",
+               message: "Validation failed: Please check your product data.",
+               errors: bodyParsed.error.errors,
             },
-            { status: 403 }
+            { status: 400 }
          );
       }
 
@@ -51,8 +42,9 @@ export async function POST(request: NextRequest) {
          const createdAt = new Date().toISOString();
          const newProduct = {
             ...product,
+            stock: Number(product.stock),
+            price: Number(product.price),
             id: hashedId,
-            isAvaible: false,
             createdAt,
             updatedAt: createdAt,
          };
@@ -62,16 +54,25 @@ export async function POST(request: NextRequest) {
          return NextResponse.json(
             {
                success: true,
-               message: "Berhasil menambah",
+               message: "Product created successfully.",
+               data: { id: hashedId },
             },
-            { status: 200 }
+            { status: 201 }
          );
       }
+      
+      return NextResponse.json(
+         {
+            success: false,
+            message: "Product with this name already exists.",
+         },
+         { status: 409 }
+      );
    } catch (err) {
       return NextResponse.json(
          {
-            sucess: false,
-            mesasge: "Internal server error",
+            success: false,
+            message: "Internal server error: Unable to process your request.",
          },
          { status: 500 }
       );

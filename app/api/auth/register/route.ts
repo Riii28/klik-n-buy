@@ -1,19 +1,21 @@
 import { adminAuth } from "@/lib/firebase/admin";
 import { createUser } from "@/lib/firebase/service/create_user";
-import { registerSchema } from "@/lib/zod/validation";
+import { signUpSchema } from "@/lib/zod/validation";
 import { NextRequest, NextResponse } from "next/server";
 import { generateID } from "@/helpers/generate_id";
 
 export async function POST(req: NextRequest) {
    try {
       const body = await req.json();
-      const parsed = registerSchema.safeParse(body);
+      const parsed = signUpSchema.safeParse(body);
 
       if (!parsed.success) {
          return NextResponse.json(
             {
                success: false,
-               message: "Validasi gagal",
+               message:
+                  "The data you entered is invalid. Please double-check and try again.",
+               errors: parsed.error.errors,
             },
             { status: 400 }
          );
@@ -22,13 +24,15 @@ export async function POST(req: NextRequest) {
       const { email, username, password } = parsed.data;
 
       const existing = await adminAuth.getUserByEmail(email).catch(() => null);
+
       if (existing) {
          return NextResponse.json(
             {
                success: false,
-               message: "Email sudah terdaftar",
+               message:
+                  "This email is already registered. Please use a different one.",
             },
-            { status: 409, statusText: "Conflict" }
+            { status: 409 }
          );
       }
 
@@ -53,7 +57,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json(
          {
             success: true,
-            message: "Akun berhasil dibuat.",
+            message: "Your account has been successfully created.",
          },
          { status: 201 }
       );
@@ -61,7 +65,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json(
          {
             success: false,
-            message: "Internal server error",
+            message: "Internal server error: Unable to process your request.",
          },
          { status: 500 }
       );

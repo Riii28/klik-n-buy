@@ -6,23 +6,14 @@ import { authOptions } from "@/auth";
 export async function DELETE(request: NextRequest) {
    try {
       const session = await getServerSession(authOptions);
-      if (!session) {
+
+      if (!session || session.user.role !== "Admin") {
          return NextResponse.json(
             {
                success: false,
-               message: "Unauthorized access",
+               message: "Unauthorized: Admin access required.",
             },
             { status: 401 }
-         );
-      }
-
-      if (session.user.role !== "Admin") {
-         return NextResponse.json(
-            {
-               success: false,
-               message: "Access denied",
-            },
-            { status: 403 }
          );
       }
 
@@ -33,14 +24,14 @@ export async function DELETE(request: NextRequest) {
          return NextResponse.json(
             {
                success: false,
-               message: "Users not found",
+               message: "No users found to delete.",
             },
             { status: 404 }
          );
       }
-
       const batch = adminDb.batch();
       const deletePromises: Promise<any>[] = [];
+      const deleteCount = userSnap.size;
 
       userSnap.docs.forEach((doc) => {
          const data = doc.data();
@@ -56,16 +47,18 @@ export async function DELETE(request: NextRequest) {
       return NextResponse.json(
          {
             success: true,
-            message: "Success",
+            message: "All users successfully deleted.",
+            data: {
+               count: deleteCount,
+            },
          },
          { status: 200 }
       );
    } catch (err) {
-      console.error(err);
       return NextResponse.json(
          {
             success: false,
-            message: "Internal server error",
+            message: "Internal server error: Unable to process your request.",
          },
          { status: 500 }
       );

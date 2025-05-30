@@ -1,20 +1,7 @@
-import React, { useState, createContext, useContext, ReactNode } from "react";
-import ConfirmDialog from "@/components/global/confirm-dialog";
-
-interface ConfirmOptions {
-   title?: string;
-   message: string;
-   onConfirm?: () => void;
-   onCancel?: () => void;
-   confirmText?: string;
-   cancelText?: string;
-}
-
-interface ConfirmState extends ConfirmOptions {
-   isOpen: boolean;
-   onConfirm: () => void;
-   onCancel: () => void;
-}
+import { createContext, useContext, ReactNode } from "react";
+import ConfirmDialog from "@/components/global/ConfirmDialog";
+import { ConfirmOptions } from "@/types/confirm_option";
+import { useConfirm } from "@/hooks/use-confirm";
 
 interface ConfirmContextType {
    confirm: (options: ConfirmOptions) => Promise<boolean>;
@@ -29,36 +16,7 @@ const ConfirmContext = createContext<ConfirmContextType | null>(null);
 export const ConfirmProvider: React.FC<ConfirmProviderProps> = ({
    children,
 }) => {
-   const [confirmState, setConfirmState] = useState<ConfirmState>({
-      isOpen: false,
-      title: "",
-      message: "",
-      onConfirm: () => {},
-      onCancel: () => {},
-      confirmText: "Yes",
-      cancelText: "Cancel",
-   });
-
-   const confirm = (options: ConfirmOptions): Promise<boolean> => {
-      return new Promise<boolean>((resolve) => {
-         setConfirmState({
-            isOpen: true,
-            ...options,
-            confirmText: options.confirmText || "Yes",
-            cancelText: options.cancelText || "Cancel",
-            onConfirm: () => {
-               setConfirmState((prev) => ({ ...prev, isOpen: false }));
-               resolve(true);
-               if (options.onConfirm) options.onConfirm();
-            },
-            onCancel: () => {
-               setConfirmState((prev) => ({ ...prev, isOpen: false }));
-               resolve(false);
-               if (options.onCancel) options.onCancel();
-            },
-         });
-      });
-   };
+   const { confirm, confirmState } = useConfirm();
 
    return (
       <ConfirmContext.Provider value={{ confirm }}>
@@ -77,12 +35,12 @@ export const ConfirmProvider: React.FC<ConfirmProviderProps> = ({
    );
 };
 
-export const useConfirm = (): ((
+export const useConfirmation = (): ((
    options: ConfirmOptions
 ) => Promise<boolean>) => {
    const context = useContext(ConfirmContext);
    if (!context) {
-      throw new Error("useConfirm harus digunakan di dalam ConfirmProvider");
+      throw new Error("useConfirm must be used within a ConfirmProvider");
    }
    return context.confirm;
 };

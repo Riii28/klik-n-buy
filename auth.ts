@@ -1,7 +1,7 @@
 import { AuthOptions, Session } from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 import CredentialsProvider from "next-auth/providers/credentials";
-import { loginSchema } from "@/lib/zod/validation";
+import { signInSchema } from "@/lib/zod/validation";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { clientAuth } from "@/lib/firebase/client";
 import { adminAuth } from "@/lib/firebase/admin";
@@ -31,7 +31,7 @@ export const authOptions: AuthOptions = {
                   profileImage: userData.profileImage,
                };
             } catch (err) {
-               throw new Error("Terjadi kesalahan saat login dengan Google");
+               throw new Error("An error occurred during Google sign in.");
             }
          },
       }),
@@ -42,9 +42,9 @@ export const authOptions: AuthOptions = {
          },
          authorize: async (credentials) => {
             try {
-               const parsedCredentials = loginSchema.safeParse(credentials);
+               const parsedCredentials = signInSchema.safeParse(credentials);
                if (!parsedCredentials.success) {
-                  throw new Error("Email atau Password tidak valid");
+                  throw new Error("Invalid email or password.");
                }
 
                const { email, password } = parsedCredentials.data;
@@ -60,7 +60,7 @@ export const authOptions: AuthOptions = {
                const hashedId = generateID(userRecord.email!);
 
                const userData = await createUser(hashedId, {
-                  username: userRecord.name || "Pengguna",
+                  username: userRecord.name || "User",
                   email: userRecord.email!,
                   profileImage: userRecord.picture || null,
                });
@@ -74,7 +74,7 @@ export const authOptions: AuthOptions = {
                };
             } catch (err) {
                throw new Error(
-                  "Login gagal. Periksa kembali email dan password Anda"
+                  "Sign in failed. Please check your email and password."
                );
             }
          },
@@ -98,8 +98,13 @@ export const authOptions: AuthOptions = {
          return session;
       },
    },
+   session: {
+      strategy: "jwt",
+      maxAge: 30 * 24 * 60 * 60,
+   },
    secret: process.env.AUTH_SECRET,
    pages: {
       signIn: "/auth/sign-in",
+      newUser: "/shop",
    },
 };

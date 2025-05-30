@@ -1,4 +1,3 @@
-import { getAllProducts } from "@/lib/firebase/service/get_all_products";
 import {
    Table,
    TableBody,
@@ -10,6 +9,11 @@ import {
    TableFooter,
 } from "../../ui/table";
 import { Product } from "@/types/product";
+import DeleteProductButton from "./DeleteProductButton";
+import { getProducts } from "@/lib/firebase/service/get_products";
+import { cn } from "@/lib/utils";
+import { formatCurrency } from "@/helpers/format_currency";
+import { truncateText } from "@/helpers/truncate_text";
 
 export default async function ProductTable({
    page,
@@ -24,54 +28,83 @@ export default async function ProductTable({
 }) {
    try {
       const currentPage = parseInt(page ?? "1");
-      const products: Product[] = await getAllProducts(currentPage, LIMIT);
+      const products: Product[] = (await getProducts(
+         currentPage,
+         LIMIT
+      )) as Product[];
 
       if (!products || products.length === 0) {
-         throw new Error("Tidak ada produk");
+         return (
+            <div className="text-center text-gray-500 py-6">
+               No products found.
+            </div>
+         );
       }
 
       return (
-         <Table className="mt-6">
-            <TableHeader className="font-bold">
-               <TableRow>
-                  <TableHead className="w-[100px]">No</TableHead>
-                  <TableHead>Name</TableHead>
-                  <TableHead className="w-[200px]">Description</TableHead>
-                  <TableHead>Price</TableHead>
-                  <TableHead>Stock</TableHead>
-                  <TableHead>Category</TableHead>
-                  <TableHead>Created At</TableHead>
-                  <TableHead>Updated At</TableHead>
-               </TableRow>
-            </TableHeader>
-            <TableBody>
-               {products.map((product: any, i: any) => (
-                  <TableRow key={i}>
-                     <TableCell>{i + 1}</TableCell>
-                     <TableCell>{product.name}</TableCell>
-                     <TableCell
-                        className="w-[200px] max-w-[200px]"
-                        title={product.description}
-                     >
-                        <p className="truncate">{product.description}</p>
-                     </TableCell>
-                     <TableCell>{product.price}</TableCell>
-                     <TableCell>{product.stock}</TableCell>
-                     <TableCell>{product.category}</TableCell>
-                     <TableCell>{product.createdAt}</TableCell>
-                     <TableCell>{product.updatedAt}</TableCell>
+         <div className={cn("w-full overflow-x-auto", className)}>
+            <Table className="min-w-[800px]">
+               <TableCaption className="text-muted-foreground text-sm mt-2">
+                  Displaying {products.length} of {totalProducts} total products
+               </TableCaption>
+               <TableHeader className="font-bold">
+                  <TableRow>
+                     <TableHead className="whitespace-nowrap">No</TableHead>
+                     <TableHead>Name</TableHead>
+                     <TableHead>Description</TableHead>
+                     <TableHead>Price</TableHead>
+                     <TableHead>Stock</TableHead>
+                     <TableHead>Category</TableHead>
+                     <TableHead>Created</TableHead>
+                     <TableHead>Updated</TableHead>
+                     <TableHead className="whitespace-nowrap">Action</TableHead>
                   </TableRow>
-               ))}
-            </TableBody>
-            <TableFooter>
-               <TableRow className="font-bold">
-                  <TableCell colSpan={7}>Total:</TableCell>
-                  <TableCell>{totalProducts} Users</TableCell>
-               </TableRow>
-            </TableFooter>
-         </Table>
+               </TableHeader>
+               <TableBody>
+                  {products.map((product, index) => (
+                     <TableRow key={product.id}>
+                        <TableCell>
+                           {(currentPage - 1) * LIMIT + index + 1}
+                        </TableCell>
+                        <TableCell>{product.name}</TableCell>
+                        <TableCell title={product.description}>
+                           {truncateText(product.description, 30)}
+                        </TableCell>
+                        <TableCell>{formatCurrency(product.price)}</TableCell>
+                        <TableCell>{product.stock}</TableCell>
+                        <TableCell className="capitalize">
+                           {product.category}
+                        </TableCell>
+                        <TableCell>{product.createdAt}</TableCell>
+                        <TableCell>{product.updatedAt}</TableCell>
+                        <TableCell>
+                           <DeleteProductButton productID={product.id} />
+                        </TableCell>
+                     </TableRow>
+                  ))}
+               </TableBody>
+               <TableFooter>
+                  <TableRow>
+                     <TableCell colSpan={8} className="font-semibold">
+                        Total
+                     </TableCell>
+                     <TableCell className="font-semibold">
+                        {totalProducts} Products
+                     </TableCell>
+                  </TableRow>
+               </TableFooter>
+            </Table>
+         </div>
       );
    } catch (err) {
-      return <div>Error loading products</div>;
+      const message =
+         err instanceof Error
+            ? err.message
+            : "Something went wrong. Please try again later.";
+      return (
+         <div className="h-68 w-full flex justify-center items-center border-1 border-light-300 rounded-lg">
+            <p className="text-sm text-dark-300 text-center">{message}</p>
+         </div>
+      );
    }
 }

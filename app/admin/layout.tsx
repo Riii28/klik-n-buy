@@ -1,4 +1,4 @@
-import { AppSidebar } from "@/components/global/app-sidebar";
+import { AppSidebar } from "@/components/global/AppSidebar";
 import Breadcrumb from "@/components/global/Breadcrumb";
 
 import {
@@ -22,3 +22,4 @@ export default function Layout({ children }: { children: ReactNode }) {
       </SidebarProvider>
    );
 }
+ 
