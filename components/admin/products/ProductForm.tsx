@@ -96,6 +96,7 @@ export default function AddProductForm() {
                            <FormLabel>Product Name</FormLabel>
                            <FormControl>
                               <Input
+                              autoComplete="off"
                                  placeholder="Enter product name"
                                  {...field}
                               />
@@ -113,6 +114,7 @@ export default function AddProductForm() {
                            <FormLabel>Description</FormLabel>
                            <FormControl>
                               <Textarea
+                                 autoComplete="off"
                                  placeholder="Enter product description"
                                  {...field}
                               />
@@ -130,6 +132,7 @@ export default function AddProductForm() {
                            <FormLabel>Price (IDR)</FormLabel>
                            <FormControl>
                               <Input
+                                 autoComplete="off"
                                  min={0}
                                  type="number"
                                  placeholder="e.g., 100000"
@@ -151,6 +154,7 @@ export default function AddProductForm() {
                            <FormLabel>Image URL</FormLabel>
                            <FormControl>
                               <Input
+                                 autoComplete="off"
                                  type="url"
                                  placeholder="https://example.com/image.jpg"
                                  {...field}
@@ -200,6 +204,7 @@ export default function AddProductForm() {
                            <FormLabel>Stock Quantity</FormLabel>
                            <FormControl>
                               <Input
+                                 autoComplete="off"
                                  min={1}
                                  type="number"
                                  placeholder="e.g., 10"

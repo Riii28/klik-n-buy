@@ -78,7 +78,7 @@ export default function SignIn() {
                      <FormItem>
                         <FormControl>
                            <Input
-                              className="w-full bg-white h-10.5 px-3 text-lg rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all pr-10 cursor-pointer"
+                              className="w-full bg-white h-10.5 px-3 text-sm rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all pr-10 cursor-pointer"
                               autoComplete="off"
                               placeholder="Enter your email address"
                               {...field}
